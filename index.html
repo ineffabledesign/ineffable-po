@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RISS-03 | PRE-ORDER</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* Clean, minimal, Gen Z aesthetic */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+    
+    :root {
+      --bg: #FAFAFA;
+      --text: #111111;
+      --accent: #EAEAEA;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--accent);
+    }
+
+    .logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; cursor: pointer; }
+    .nav-links button {
+      background: none; border: none; font-size: 1rem; cursor: pointer; font-weight: 700; margin-left: 1rem;
+    }
+    .nav-links button:hover { text-decoration: underline; }
+
+    .page { display: none; padding: 4rem 2rem; max-width: 1000px; margin: 0 auto; }
+    .page.active { display: block; }
+
+    /* Landing Page */
+    .hero { text-align: center; margin-top: 10vh; }
+    .hero h1 { font-size: 5rem; font-weight: 900; letter-spacing: -3px; margin: 0; line-height: 1; }
+    .hero p { font-size: 1.5rem; color: #666; margin-top: 1rem; }
+    .btn-main { background: var(--text); color: var(--bg); padding: 1rem 3rem; font-size: 1.2rem; font-weight: 700; border: none; cursor: pointer; margin-top: 2rem; border-radius: 50px; }
+    
+    /* Product Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem; }
+    .product-card { padding: 1.5rem; border: 1px solid var(--accent); border-radius: 12px; }
+    .product-card h3 { margin: 0 0 0.5rem 0; }
+    .qty-input { width: 60px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; margin-top: 1rem; }
+
+    /* Forms */
+    .checkout-form { margin-top: 4rem; padding: 2rem; background: #fff; border-radius: 12px; border: 1px solid var(--accent); }
+    input[type="text"], input[type="email"], input[type="file"] { width: 100%; padding: 1rem; margin: 0.5rem 0 1.5rem 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+    .total-box { font-size: 1.5rem; font-weight: 900; margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo" onclick="navTo('landing')">RISS-03</div>
+    <div class="nav-links">
+      <button onclick="navTo('preorder')">ORDER</button>
+      <button onclick="navTo('status')">CHECK STATUS</button>
+    </div>
+  </nav>
+
+  <!-- LANDING PAGE -->
+  <div id="landing" class="page active">
+    <div class="hero">
+      <h1>NEW BATCH.</h1>
+      <p>Secure your slot before production starts.</p>
+      <button class="btn-main" onclick="navTo('preorder')">PRE-ORDER NOW</button>
+    </div>
+  </div>
+
+  <!-- PRE-ORDER PAGE -->
+  <div id="preorder" class="page">
+    <h2>SELECT YOUR ITEMS</h2>
+    <div class="grid" id="product-grid"></div>
+
+    <div class="checkout-form">
+      <h2>CHECKOUT (DP ONLY)</h2>
+      <p>Please pay the DP via BCA or ShopeePay before submitting.</p>
+      <div class="total-box">DP Due: Rp <span id="dp-total">0</span></div>
+      
+      <label>Full Name</label>
+      <input type="text" id="cust-name" required>
+
+      <label>Email Address</label>
+      <input type="email" id="cust-email" required>
+
+      <label>Upload Payment Proof (BCA / ShopeePay)</label>
+      <input type="file" id="cust-proof" accept="image/*" required>
+
+      <button class="btn-main" style="width: 100%;" onclick="submitOrder()">SUBMIT ORDER</button>
+    </div>
+  </div>
+
+  <!-- STATUS PAGE -->
+  <div id="status" class="page">
+    <h2>CHECK YOUR STATUS</h2>
+    <p>Enter the email you used for your pre-order.</p>
+    <input type="email" id="check-email" placeholder="you@email.com">
+    <button class="btn-main" onclick="checkStatus()">FIND MY ORDER</button>
+    
+    <div id="status-result" style="margin-top: 2rem; display: none; padding: 2rem; background: #fff; border: 1px solid var(--text);">
+      <!-- Status will be injected here -->
+    </div>
+  </div>
+
+  <script>
+    // 1. SUPABASE SETUP
+    const supabaseUrl = 'YOUR_SUPABASE_URL';
+    const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+    // 2. PRODUCT DATA (15 Items)
+    const products = [
+      { id: 'vc-01', name: 'Visual Center Keychain A', price: 45000 },
+      { id: 'vc-02', name: 'Visual Center Keychain B', price: 45000 },
+      { id: 'pc-01', name: 'Deco Photocard Holder', price: 65000 },
+      { id: 'ph-02', name: 'Acrylic Standee', price: 85000 },
+      { id: 'bg-01', name: 'Canvas Tote Bag', price: 120000 },
+      { id: 'po-01', name: 'Pouch Variant A', price: 75000 },
+      { id: 'po-02', name: 'Pouch Variant B', price: 75000 },
+      { id: 'st-01', name: 'Holo Sticker Sheet', price: 20000 },
+      { id: 'st-02', name: 'Matte Sticker Pack', price: 25000 },
+      { id: 'ap-01', name: 'Oversized Graphic Tee', price: 180000 },
+      { id: 'ap-02', name: 'Embroidered Cap', price: 110000 },
+      { id: 'ms-01', name: 'Washi Tape Set', price: 40000 },
+      { id: 'ms-02', name: 'Memo Pad', price: 35000 },
+      { id: 'ms-03', name: 'Lanyard', price: 30000 },
+      { id: 'bg-02', name: 'Mini Crossbody Bag', price: 150000 },
+    ];
+
+    let currentOrder = {};
+
+    // 3. UI LOGIC
+    function navTo(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      if (pageId === 'preorder') renderProducts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = '';
+      products.forEach(p => {
+        grid.innerHTML += `
+          <div class="product-card">
+            <h3>${p.name}</h3>
+            <p>Rp ${p.price.toLocaleString()}</p>
+            <input type="number" min="0" value="0" class="qty-input" data-id="${p.id}" data-price="${p.price}" onchange="calculateTotal()">
+          </div>
+        `;
+      });
+    }
+
+    function calculateTotal() {
+      let total = 0;
+      currentOrder = {};
+      document.querySelectorAll('.qty-input').forEach(input => {
+        const qty = parseInt(input.value);
+        if (qty > 0) {
+          total += qty * parseInt(input.dataset.price);
+          currentOrder[input.dataset.id] = qty;
+        }
+      });
+      // DP is set to 50% of total
+      const dp = total / 2;
+      document.getElementById('dp-total').innerText = dp.toLocaleString();
+    }
+
+    // 4. DATABASE LOGIC (Upload & Submit)
+    async function submitOrder() {
+      const name = document.getElementById('cust-name').value;
+      const email = document.getElementById('cust-email').value;
+      const fileInput = document.getElementById('cust-proof');
+
+      if (!name || !email || !fileInput.files[0] || Object.keys(currentOrder).length === 0) {
+        alert("Please fill all details, select items, and upload your proof of payment.");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const fileName = `${Date.now()}-${file.name}`;
+
+      // Upload image to Supabase Storage bucket called "payment_proofs"
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('payment_proofs')
+        .upload(fileName, file);
+
+      if (uploadError) {
+        alert("Failed to upload image. Please try again.");
+        return;
+      }
+
+      // Save order to Supabase Database table called "orders"
+      const { data, error } = await supabase
+        .from('orders')
+        .insert([{
+          customer_name: name,
+          customer_email: email,
+          items: currentOrder,
+          proof_url: fileName,
+          status: 'Verification Pending'
+        }]);
+
+      if (error) alert("Error submitting order.");
+      else {
+        alert("Order submitted successfully! Keep an eye on your email.");
+        navTo('landing');
+      }
+    }
+
+    // 5. CHECK STATUS LOGIC
+    async function checkStatus() {
+      const email = document.getElementById('check-email').value;
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('customer_email', email);
+
+      const resultDiv = document.getElementById('status-result');
+      resultDiv.style.display = 'block';
+
+      if (data && data.length > 0) {
+        const order = data[0];
+        resultDiv.innerHTML = `
+          <h3>Hello, ${order.customer_name}</h3>
+          <p><strong>Current Status:</strong> <span style="background: var(--text); color: var(--bg); padding: 5px 10px;">${order.status}</span></p>
+          <p><em>When status changes to "Ready for Pelunasan", a Shopee link will appear here.</em></p>
+        `;
+      } else {
+        resultDiv.innerHTML = `<p>No order found for that email.</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
