@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Ineffable Design</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #fffbf3 0%, #fff5eb 100%);
+      color: #2c2c2c;
+      letter-spacing: -0.4px;
+      font-weight: 500;
+    }
+
+    .wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 1.2rem 1.5rem;
+      background: white;
+      border-bottom: 2px dashed rgba(180, 231, 255, 0.4);
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #B4E7FF 0%, #FFB6E1 50%, #FFFACD 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+
+    .main { flex: 1; padding: 2rem 1.5rem; }
+
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .admin-header h2 {
+      font-size: 24px;
+      margin-bottom: 0.5rem;
+    }
+
+    .logout-btn {
+      background: #FFB6E1;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 1rem;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #FF8AB8;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .admin-grid { grid-template-columns: 1fr; }
+    }
+
+    .admin-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 2px solid #B4E7FF;
+    }
+
+    .admin-card h3 {
+      font-size: 14px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #2c2c2c;
+    }
+
+    .add-form {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .add-form input {
+      flex: 1;
+      padding: 0.6rem;
+      border: 2px solid #FFFACD;
+      border-radius: 8px;
+      font-size: 12px;
+    }
+
+    .add-form button {
+      padding: 0.6rem 1rem;
+      background: #FFFACD;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 11px;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .add-form button:hover {
+      background: #FFE680;
+    }
+
+    .item-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem;
+      background: #fffbf3;
+      border-radius: 8px;
+      font-size: 12px;
+      border: 1px solid #FFB6E120;
+    }
+
+    .delete-btn {
+      background: #FFB6E1;
+      border: none;
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      font-size: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+
+    .delete-btn:hover {
+      background: #FF8AB8;
+    }
+
+    .orders-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .order-item {
+      background: #fffbf3;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.8rem;
+      border-left: 3px solid #B4E7FF;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .order-label {
+      font-weight: 700;
+      color: #2c2c2c;
+    }
+
+    .order-value {
+      color: #888;
+    }
+
+    .export-btn {
+      width: 100%;
+      padding: 0.8rem;
+      background: linear-gradient(90deg, #FFFACD, #B4E7FF);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      transition: all 0.3s;
+      color: #2c2c2c;
+      margin-top: 1rem;
+    }
+
+    .export-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(255, 250, 205, 0.4);
+    }
+
+    .empty {
+      text-align: center;
+      color: #888;
+      padding: 1.5rem;
+      font-size: 12px;
+    }
+
+    .password-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 251, 243, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .password-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      border: 2px solid #B4E7FF;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .password-box h3 {
+      font-size: 16px;
+      margin-bottom: 1rem;
+      color: #2c2c2c;
+    }
+
+    .password-box input {
+      width: 100%;
+      padding: 0.7rem;
+      border: 2px solid #FFB6E1;
+      border-radius: 8px;
+      margin-bottom: 0.8rem;
+      font-size: 13px;
+    }
+
+    .password-box button {
+      width: 100%;
+      padding: 0.7rem;
+      background: linear-gradient(90deg, #FFB6E1, #B4E7FF);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #2c2c2c;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="password-overlay" id="passwordOverlay">
+    <div class="password-box">
+      <h3>admin access 🔐</h3>
+      <input type="password" id="adminPassword" placeholder="code?" onkeypress="if(event.key==='Enter') checkPassword()">
+      <button onclick="checkPassword()">unlock</button>
+    </div>
+  </div>
+
+  <div class="wrapper hidden" id="adminPanel">
+    <div class="header">
+      <div class="logo">✨ INEFFABLE DESIGN ✨</div>
+    </div>
+
+    <div class="main">
+      <div class="admin-container">
+        <div class="admin-header">
+          <h2>manage ur empire 👑</h2>
+          <button class="logout-btn" onclick="logout()">logout</button>
+        </div>
+
+        <div class="admin-grid">
+          <div class="admin-card">
+            <h3>products</h3>
+            <div class="add-form">
+              <input type="text" id="newProductName" placeholder="name">
+              <input type="text" id="newProductEmoji" placeholder="emoji" style="width: 50px;">
+              <button onclick="addProduct()">add</button>
+            </div>
+            <div class="item-list" id="productsList"></div>
+          </div>
+
+          <div class="admin-card">
+            <h3>pre-orders</h3>
+            <div class="orders-list" id="ordersList"></div>
+            <button class="export-btn" onclick="exportData()">📥 export json</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = 'ineffable2024';
+    let products = JSON.parse(localStorage.getItem('ineffable_products')) || [
+      { name: 'TWICE Hoodie', emoji: '🎵' },
+      { name: 'Vintage Tee', emoji: '👕' },
+      { name: 'Tote Bag', emoji: '👜' },
+      { name: 'Sticker Pack', emoji: '✨' }
+    ];
+    let orders = JSON.parse(localStorage.getItem('ineffable_orders')) || [];
+
+    function checkPassword() {
+      const pwd = document.getElementById('adminPassword').value;
+      if (pwd === ADMIN_PASSWORD) {
+        localStorage.setItem('adminAuth', 'true');
+        document.getElementById('passwordOverlay').style.display = 'none';
+        document.getElementById('adminPanel').classList.remove('hidden');
+        updateProductsList();
+        updateOrdersList();
+      } else {
+        alert('wrong code bestie 💔');
+        document.getElementById('adminPassword').value = '';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('adminAuth');
+      window.location.href = 'index.html';
+    }
+
+    function checkAuth() {
+      const isAuthed = localStorage.getItem('adminAuth') === 'true';
+      if (isAuthed) {
+        document.getElementById('passwordOverlay').style.display = 'none';
+        document.getElementById('adminPanel').classList.remove('hidden');
+        updateProductsList();
+        updateOrdersList();
+      }
+    }
+
+    function updateProductsList() {
+      const list = document.getElementById('productsList');
+      list.innerHTML = products.length ? products.map((p, i) => `
+        <div class="item">
+          <span>${p.emoji} ${p.name}</span>
+          <button class="delete-btn" onclick="deleteProduct(${i})">delete</button>
+        </div>
+      `).join('') : '<div class="empty">no products yet</div>';
+    }
+
+    function addProduct() {
+      const name = document.getElementById('newProductName').value.trim();
+      const emoji = document.getElementById('newProductEmoji').value.trim();
+      if (name && emoji) {
+        products.push({ name, emoji });
+        localStorage.setItem('ineffable_products', JSON.stringify(products));
+        document.getElementById('newProductName').value = '';
+        document.getElementById('newProductEmoji').value = '';
+        updateProductsList();
+      }
+    }
+
+    function deleteProduct(i) {
+      products.splice(i, 1);
+      localStorage.setItem('ineffable_products', JSON.stringify(products));
+      updateProductsList();
+    }
+
+    function updateOrdersList() {
+      const list = document.getElementById('ordersList');
+      if (orders.length === 0) {
+        list.innerHTML = '<div class="empty">waiting for orders...</div>';
+        return;
+      }
+      
+      list.innerHTML = [...orders].reverse().map(o => `
+        <div class="order-item">
+          <p><span class="order-label">name:</span> <span class="order-value">${o.nama}</span></p>
+          <p><span class="order-label">email:</span> <span class="order-value">${o.email}</span></p>
+          <p><span class="order-label">contact:</span> <span class="order-value">${o.kontak}</span></p>
+          <p><span class="order-label">product:</span> <span class="order-value">${o.produk}</span></p>
+          <p><span class="order-label">payment:</span> <span class="order-value">${o.metode}</span></p>
+          <p><span class="order-label">proof:</span> <span class="order-value">${o.file}</span></p>
+          ${o.keterangan ? `<p><span class="order-label">notes:</span> <span class="order-value">${o.keterangan}</span></p>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function exportData() {
+      const data = { 
+        products, 
+        orders, 
+        exported: new Date().toLocaleString('id-ID') 
+      };
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ineffable-data-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    checkAuth();
+  </script>
+</body>
+</html>

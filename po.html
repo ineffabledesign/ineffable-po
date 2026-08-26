@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pre-Order - Ineffable Design</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #fffbf3 0%, #fff5eb 100%);
+      color: #2c2c2c;
+      letter-spacing: -0.4px;
+      font-weight: 500;
+    }
+
+    .wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 1.2rem 1.5rem;
+      background: white;
+      border-bottom: 2px dashed rgba(180, 231, 255, 0.4);
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #B4E7FF 0%, #FFB6E1 50%, #FFFACD 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+
+    .main { flex: 1; padding: 2rem 1.5rem; }
+
+    .po-container {
+      max-width: 550px;
+      margin: 0 auto;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      color: #2c2c2c;
+    }
+
+    .po-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .po-header h2 {
+      font-size: 24px;
+      margin-bottom: 0.5rem;
+    }
+
+    .po-header p {
+      color: #888;
+      font-size: 13px;
+    }
+
+    .form-section {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 2px solid #FFB6E1;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 0.5rem;
+      color: #2c2c2c;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      border: 2px solid #B4E7FF;
+      border-radius: 10px;
+      font-size: 13px;
+      background: #fffbf3;
+      color: #2c2c2c;
+      font-family: inherit;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      outline: none;
+      border-color: #FFB6E1;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(255, 182, 225, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .file-upload {
+      border: 2px dashed #FFFACD;
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: #fffef8;
+    }
+
+    .file-upload:hover {
+      border-color: #FFB6E1;
+      background: white;
+    }
+
+    .file-upload input { display: none; }
+
+    .file-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #2c2c2c;
+      display: block;
+    }
+
+    .file-hint {
+      font-size: 11px;
+      color: #888;
+      margin-top: 0.3rem;
+    }
+
+    .file-name {
+      color: #FFB6E1;
+      font-size: 11px;
+      margin-top: 0.4rem;
+      font-weight: 600;
+    }
+
+    .success-msg {
+      background: linear-gradient(90deg, #B4E7FF, #FFB6E1);
+      padding: 0.9rem;
+      border-radius: 10px;
+      margin-bottom: 1.2rem;
+      font-size: 12px;
+      color: white;
+      display: none;
+      animation: pop 0.4s ease-out;
+    }
+
+    .success-msg.show { display: block; }
+
+    @keyframes pop {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: linear-gradient(90deg, #B4E7FF, #FFB6E1);
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      transition: all 0.3s;
+      color: #2c2c2c;
+      margin-top: 0.5rem;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 182, 225, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <div class="logo">✨ INEFFABLE DESIGN ✨</div>
+    </div>
+
+    <div class="main">
+      <div class="po-container">
+        <a href="index.html" class="back-btn">← back</a>
+
+        <div class="po-header">
+          <h2>grab ur fave 💕</h2>
+          <p>complete the form below to secure ur pre-order</p>
+        </div>
+
+        <div class="form-section">
+          <div class="success-msg" id="successMsg">✨ pre-order submitted! we'll contact u soon ✨</div>
+
+          <form id="orderForm">
+            <div class="form-group">
+              <label class="form-label">email</label>
+              <input type="email" class="form-input" id="email" required placeholder="your@email.com">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">full name</label>
+              <input type="text" class="form-input" id="nama" required placeholder="ur name">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">whatsapp / line / instagram</label>
+              <input type="text" class="form-input" id="kontak" required placeholder="08xx or @username">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">which design?</label>
+              <select class="form-select" id="produk" required>
+                <option value="">pick one</option>
+                <option value="TWICE Hoodie">🎵 TWICE Hoodie</option>
+                <option value="Vintage Tee">👕 Vintage Tee</option>
+                <option value="Tote Bag">👜 Tote Bag</option>
+                <option value="Sticker Pack">✨ Sticker Pack</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">notes (optional)</label>
+              <textarea class="form-textarea" id="keterangan" placeholder="special requests?"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">payment method</label>
+              <select class="form-select" id="metode" required>
+                <option value="">choose one</option>
+                <option value="Shopee">Shopee</option>
+                <option value="QRIS">QRIS</option>
+                <option value="BCA">BCA Transfer</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">proof of payment</label>
+              <div class="file-upload" onclick="document.getElementById('bukti').click()">
+                <span class="file-label">📸 upload screenshot</span>
+                <span class="file-hint">JPG, PNG, or PDF</span>
+                <span class="file-name" id="fileName"></span>
+                <input type="file" id="bukti" accept="image/*,.pdf">
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn">submit pre-order</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let orders = JSON.parse(localStorage.getItem('ineffable_orders')) || [];
+
+    document.getElementById('bukti').addEventListener('change', (e) => {
+      if (e.target.files[0]) {
+        document.getElementById('fileName').textContent = '✓ ' + e.target.files[0].name;
+      }
+    });
+
+    const fileZone = document.querySelector('.file-upload');
+    fileZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileZone.style.background = '#FFB6E120';
+    });
+
+    fileZone.addEventListener('dragleave', () => {
+      fileZone.style.background = '#fffef8';
+    });
+
+    fileZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileZone.style.background = '#fffef8';
+      if (e.dataTransfer.files[0]) {
+        document.getElementById('bukti').files = e.dataTransfer.files;
+        document.getElementById('fileName').textContent = '✓ ' + e.dataTransfer.files[0].name;
+      }
+    });
+
+    document.getElementById('orderForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const order = {
+        id: Date.now(),
+        email: document.getElementById('email').value,
+        nama: document.getElementById('nama').value,
+        kontak: document.getElementById('kontak').value,
+        produk: document.getElementById('produk').value,
+        keterangan: document.getElementById('keterangan').value,
+        metode: document.getElementById('metode').value,
+        file: document.getElementById('bukti').files[0]?.name || 'no file',
+        tanggal: new Date().toLocaleString('id-ID')
+      };
+      
+      orders.push(order);
+      localStorage.setItem('ineffable_orders', JSON.stringify(orders));
+      
+      const msg = document.getElementById('successMsg');
+      msg.classList.add('show');
+      setTimeout(() => msg.classList.remove('show'), 3500);
+      
+      e.target.reset();
+      document.getElementById('fileName').textContent = '';
+    });
+  </script>
+</body>
+</html>

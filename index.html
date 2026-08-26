@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ineffable Design - K-pop Merch Pre-Order</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #fffbf3 0%, #fff5eb 100%);
+      color: #2c2c2c;
+      letter-spacing: -0.4px;
+      font-weight: 500;
+    }
+
+    .wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 1.2rem 1.5rem;
+      background: white;
+      border-bottom: 2px dashed rgba(180, 231, 255, 0.4);
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #B4E7FF 0%, #FFB6E1 50%, #FFFACD 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+
+    .main { flex: 1; }
+
+    .landing {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
+    }
+
+    .landing-content {
+      max-width: 600px;
+    }
+
+    .landing-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #B4E7FF, #FFB6E1);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #2c2c2c;
+      margin-bottom: 1.5rem;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .landing h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      line-height: 1.1;
+      letter-spacing: -2px;
+    }
+
+    @media (max-width: 768px) {
+      .landing h1 { font-size: 2rem; }
+    }
+
+    .landing-highlight {
+      background: linear-gradient(90deg, #FFB6E1, #B4E7FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .landing p {
+      font-size: 16px;
+      color: #888;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .urgency {
+      background: linear-gradient(90deg, #FFB6E1 0%, #FFFACD 100%);
+      padding: 1.2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      font-weight: 700;
+      color: #2c2c2c;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 500px) {
+      .stats { grid-template-columns: 1fr; }
+    }
+
+    .stat-box {
+      background: white;
+      border: 2px solid #B4E7FF;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #FFB6E1, #B4E7FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #888;
+      font-weight: 600;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-direction: column;
+    }
+
+    @media (max-width: 500px) {
+      .cta-buttons { gap: 0.8rem; }
+    }
+
+    .btn-primary {
+      padding: 1rem 2rem;
+      background: linear-gradient(90deg, #B4E7FF, #FFB6E1);
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #2c2c2c;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(255, 182, 225, 0.3);
+    }
+
+    .btn-primary:active {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      padding: 1rem 2rem;
+      background: white;
+      border: 2px solid #B4E7FF;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #2c2c2c;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-secondary:hover {
+      background: #B4E7FF;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <div class="logo">✨ INEFFABLE DESIGN ✨</div>
+    </div>
+
+    <div class="main">
+      <div class="landing">
+        <div class="landing-content">
+          <div class="landing-badge">🚨 new drop alert</div>
+          
+          <h1>K-pop merch that <span class="landing-highlight">actually hits</span></h1>
+          
+          <p>limited edition designs. only a few left. seriously.</p>
+          
+          <div class="urgency">
+            ⏰ slots filling up FAST — don't miss out before it runs out
+          </div>
+
+          <div class="stats">
+            <div class="stat-box">
+              <div class="stat-number">47</div>
+              <div class="stat-label">units left</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-number">892</div>
+              <div class="stat-label">interested</div>
+            </div>
+          </div>
+
+          <div class="cta-buttons">
+            <a href="po.html" class="btn-primary">✨ pre-order now ✨</a>
+            <a href="po.html" class="btn-secondary">see all designs</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
