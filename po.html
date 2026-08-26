@@ -311,9 +311,10 @@
       }
     });
 
-    // Submit order to Supabase
+    // Submit order to Supabase with debug alerts
     document.getElementById('orderForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      alert('Step 1: Form submitted, JavaScript is running!');
 
       // Collect form data
       const email = document.getElementById('email').value.trim();
@@ -326,15 +327,16 @@
       const paymentFile = fileInput.files[0];
 
       try {
-        // Validate file size (max 5 MB)
+        alert('Step 2: About to upload file (if any) and insert order.');
+
         if (paymentFile && paymentFile.size > 5 * 1024 * 1024) {
           throw new Error('File terlalu besar! Maksimal 5 MB.');
         }
 
         let proofUrl = '';
 
-        // 1. Upload payment proof if exists
         if (paymentFile) {
+          alert('Step 3: Uploading file to Supabase Storage...');
           const fileExt = paymentFile.name.split('.').pop();
           const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
 
@@ -350,14 +352,16 @@
             throw new Error('Upload bukti pembayaran gagal: ' + uploadError.message);
           }
 
-          // Get public URL
           const { data: publicUrlData } = supabase.storage
             .from('payment-proofs')
             .getPublicUrl(fileName);
           proofUrl = publicUrlData.publicUrl;
+          alert('Step 4: File uploaded successfully, URL: ' + proofUrl);
+        } else {
+          alert('Step 3: No file selected, skipping upload.');
         }
 
-        // 2. Insert order into Supabase
+        alert('Step 5: Inserting order into Supabase...');
         const { data, error } = await supabase
           .from('orders')
           .insert([{
@@ -374,7 +378,7 @@
           throw new Error('Gagal menyimpan pesanan: ' + error.message);
         }
 
-        // 3. Show success message and reset form
+        alert('Step 6: Success! Order saved.');
         const msg = document.getElementById('successMsg');
         msg.classList.add('show');
         setTimeout(() => msg.classList.remove('show'), 3500);
