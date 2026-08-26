@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pre-Order - Ineffable Design</title>
@@ -278,14 +279,19 @@
   </div>
 
   <script>
-    let orders = JSON.parse(localStorage.getItem('ineffable_orders')) || [];
+    // Supabase configuration
+    const SUPABASE_URL = 'https://jzmnwvszlqhvxgynhgfy.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6bW53dnN6bHFodnhneW5oZ2Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MjAwMjQsImV4cCI6MjEwMzI5NjAyNH0.-EaFbUplfhQIlXKhuFn81DFDeRwBiezaYL09PoDFR4A';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // File input display
     document.getElementById('bukti').addEventListener('change', (e) => {
       if (e.target.files[0]) {
         document.getElementById('fileName').textContent = '✓ ' + e.target.files[0].name;
       }
     });
 
+    // Drag and drop styling
     const fileZone = document.querySelector('.file-upload');
     fileZone.addEventListener('dragover', (e) => {
       e.preventDefault();
@@ -305,30 +311,81 @@
       }
     });
 
-    document.getElementById('orderForm').addEventListener('submit', (e) => {
+    // Submit order to Supabase
+    document.getElementById('orderForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      const order = {
-        id: Date.now(),
-        email: document.getElementById('email').value,
-        nama: document.getElementById('nama').value,
-        kontak: document.getElementById('kontak').value,
-        produk: document.getElementById('produk').value,
-        keterangan: document.getElementById('keterangan').value,
-        metode: document.getElementById('metode').value,
-        file: document.getElementById('bukti').files[0]?.name || 'no file',
-        tanggal: new Date().toLocaleString('id-ID')
-      };
-      
-      orders.push(order);
-      localStorage.setItem('ineffable_orders', JSON.stringify(orders));
-      
-      const msg = document.getElementById('successMsg');
-      msg.classList.add('show');
-      setTimeout(() => msg.classList.remove('show'), 3500);
-      
-      e.target.reset();
-      document.getElementById('fileName').textContent = '';
+
+      // Collect form data
+      const email = document.getElementById('email').value.trim();
+      const nama = document.getElementById('nama').value.trim();
+      const kontak = document.getElementById('kontak').value.trim();
+      const produk = document.getElementById('produk').value;
+      const keterangan = document.getElementById('keterangan').value.trim();
+      const metode = document.getElementById('metode').value;
+      const fileInput = document.getElementById('bukti');
+      const paymentFile = fileInput.files[0];
+
+      try {
+        // Validate file size (max 5 MB)
+        if (paymentFile && paymentFile.size > 5 * 1024 * 1024) {
+          throw new Error('File terlalu besar! Maksimal 5 MB.');
+        }
+
+        let proofUrl = '';
+
+        // 1. Upload payment proof if exists
+        if (paymentFile) {
+          const fileExt = paymentFile.name.split('.').pop();
+          const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
+
+          const { data: uploadData, error: uploadError } = await supabase.storage
+            .from('payment-proofs')
+            .upload(fileName, paymentFile, {
+              cacheControl: '3600',
+              upsert: false,
+              contentType: paymentFile.type
+            });
+
+          if (uploadError) {
+            throw new Error('Upload bukti pembayaran gagal: ' + uploadError.message);
+          }
+
+          // Get public URL
+          const { data: publicUrlData } = supabase.storage
+            .from('payment-proofs')
+            .getPublicUrl(fileName);
+          proofUrl = publicUrlData.publicUrl;
+        }
+
+        // 2. Insert order into Supabase
+        const { data, error } = await supabase
+          .from('orders')
+          .insert([{
+            email: email,
+            nama: nama,
+            kontak: kontak,
+            produk: produk,
+            keterangan: keterangan,
+            metode: metode,
+            proof_url: proofUrl
+          }]);
+
+        if (error) {
+          throw new Error('Gagal menyimpan pesanan: ' + error.message);
+        }
+
+        // 3. Show success message and reset form
+        const msg = document.getElementById('successMsg');
+        msg.classList.add('show');
+        setTimeout(() => msg.classList.remove('show'), 3500);
+
+        e.target.reset();
+        document.getElementById('fileName').textContent = '';
+
+      } catch (err) {
+        console.error(err);
+        alert('Terjadi kesalahan: ' + err.message);
+      }
     });
   </script>
 </body>
