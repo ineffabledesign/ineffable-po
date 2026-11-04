@@ -1,9 +1,9 @@
 // ===== EDIT DI SINI: daftar produk (dipakai index.html DAN halaman admin; foto di folder images/) =====
 const PRODUCTS=[
-  {id:"p1",name:"Produk Contoh 1",desc:"Deskripsi singkat produk.",price:25000,img:"images/p1.jpg"},
-  {id:"p2",name:"Produk Contoh 2",desc:"Deskripsi singkat produk.",price:35000,img:"images/p2.jpg"},
-  {id:"p3",name:"Produk Contoh 3",desc:"Deskripsi singkat produk.",price:45000,img:"images/p3.jpg"},
-  {id:"p4",name:"Produk Contoh 4",desc:"Deskripsi singkat produk.",price:55000,img:"images/p4.jpg"}
+  {id:"p1",name:"Totebag",desc:"Totebag nya kak.",price:25000,img:"images/p1.jpg"},
+  {id:"p2",name:"Pouch",desc:"Pouch bagus, yuk beli.",price:35000,img:"images/p2.jpg"},
+  {id:"p3",name:"Sticker",desc:"Sticker lucu, imut.",price:45000,img:"images/p3.jpg"},
+  {id:"p4",name:"Handsanitizer",desc:"Handsanitizer wangi.",price:55000,img:"images/p4.jpg"}
 ];
 // ======================================================================
 
